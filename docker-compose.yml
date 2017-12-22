@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+    minio:
+        image: minio/minio
+        ports:
+            - "9000:9000"
+        volumes:
+            - "./images:/images"
+        environment:
+            - "MINIO_ACCESS_KEY=SCALEWAYS3LIKE"
+            - "MINIO_SECRET_KEY=424242424242"
+        command: server /images
