@@ -1,15 +1,15 @@
 import  os
 import  sqlite3
-from    flask          import Flask, request
-from    flask_restful  import Resource, Api
-from    werkzeug.utils import secure_filename
-from    minio          import Minio
-from    minio.error    import ResponseError
 
+from flask import Flask, request
+from flask_restful import Resource, Api
+from werkzeug.utils import secure_filename
+from minio import Minio
+from minio.error import ResponseError
 
-ALLOWED_EXTENSIONS  = ['png', 'jpg', 'jpeg', 'gif']
-UPLOAD_FOLDER       = '/tmp'
-BUCKET_NAME         = 'scaleway'
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+UPLOAD_FOLDER = '/tmp'
+BUCKET_NAME = 'scaleway'
 
 app = Flask(__name__)
 api = Api(app)
@@ -19,7 +19,8 @@ def allowed_file(filename):
 
 class Image(Resource):
     def get(self):
-        return "ICI JE LISTE TOUT LES UPLOAD"
+        return "ICI JE LISTE TOUT LES UPLOAD ou L'image en question si ID"
+
     def post(self):
         if 'image' not in request.files or 'name' not in request.form:
             return {'error': "No file part or No 'name' paramters"}
@@ -43,8 +44,8 @@ class Image(Resource):
                     last_id = cursor.lastrowid
                     bdd.commit()
                     return {'success': 'http://localhost:5000/' + str(last_id)}
-            else:
-                return {'error': 'Format allowed is .png .jpg .jpeg .gif or bad filename'}
+            return {'error': 'Format allowed is .png .jpg .jpeg .gif or bad filename'}
+
     def delete(self):
         return "ICI JE SUPRIME UNE PHOTO"
 
@@ -55,10 +56,12 @@ if __name__ == '__main__':
         os.makedirs(UPLOAD_FOLDER)
     bdd = sqlite3.connect('s3.db', check_same_thread=False)
     bdd.execute("CREATE TABLE IF NOT EXISTS images ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT  NOT NULL, `description` TEXT DEFAULT NULL);")
-    minioClient =   Minio('127.0.0.1:9000',
-                    access_key='SCALEWAYS3LIKE',
-                    secret_key='424242424242',
-                    secure=False)
+    minioClient = Minio(
+        '127.0.0.1:9000',
+        access_key='SCALEWAYS3LIKE',
+        secret_key='424242424242',
+        secure=False
+    )
     if minioClient.bucket_exists(BUCKET_NAME) == False:
         minioClient.make_bucket(BUCKET_NAME)
     app.run(debug=True)
