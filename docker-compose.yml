@@ -6,8 +6,17 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - "./images:/images"
+           - "./images:/images"
         environment:
             - "MINIO_ACCESS_KEY=SCALEWAYS3LIKE"
             - "MINIO_SECRET_KEY=424242424242"
         command: server /images
+
+    web:
+        depends_on:
+            - "minio"
+        build: ./api
+        ports:
+            - "5000:5000"
+        volumes:
+            - ".:/code"

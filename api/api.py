@@ -91,6 +91,10 @@ class Image(Resource):
 
 api.add_resource(Image, '/image', '/image/<int:id>', endpoint="image_get_delete")
 
+@app.route('/')
+def hello_world():
+    return 'Flask Dockerized'
+
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
@@ -104,11 +108,11 @@ if __name__ == '__main__':
         );
     """)
     minioClient = Minio(
-        '127.0.0.1:9000',
+        'minio:9000',
         access_key='SCALEWAYS3LIKE',
         secret_key='424242424242',
         secure=False
     )
     if minioClient.bucket_exists(BUCKET_NAME) == False:
         minioClient.make_bucket(BUCKET_NAME)
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
