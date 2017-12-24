@@ -5,7 +5,6 @@ from flask import Flask, request, Response
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 from minio import Minio
-from minio.error import ResponseError
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 UPLOAD_FOLDER = '/tmp'
