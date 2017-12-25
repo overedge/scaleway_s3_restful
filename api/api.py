@@ -36,7 +36,7 @@ class Image(Resource):
         req = cursor.execute("SELECT imagename FROM images where id = ?", (id,))
         data = cursor.fetchone()
         if data == None:
-            return {'error': "This id doesn't match with any image"}
+            return {'error': "This id doesn't match with any image"}, 400
         stream = minioClient.get_object(BUCKET_NAME, data[0])
         extension = data[0].rsplit('.', 1)[1].lower()
         response = app.make_response(stream.read())
@@ -50,7 +50,7 @@ class Image(Resource):
             Error    : Error if filename exist or bad filename or bad extention
         """
         if 'image' not in request.files or 'name' not in request.form:
-            return {'error': "No file part or No 'name' paramters"}
+            return {'error': "No file part or No 'name' paramters"}, 400
         else:
             image = request.files['image']
             name = request.form['name']
@@ -59,7 +59,7 @@ class Image(Resource):
                 imagename = secure_filename(image.filename)
                 try:
                     minioClient.stat_object(BUCKET_NAME, imagename)
-                    return {'error': 'The filename is already used'}
+                    return {'error': 'The filename is already used'}, 400
                 except:
                     image.save(os.path.join(UPLOAD_FOLDER, imagename))
                     data = open(os.path.join(UPLOAD_FOLDER, imagename), 'rb')
@@ -71,7 +71,7 @@ class Image(Resource):
                     last_id = cursor.lastrowid
                     bdd.commit()
                     return {'success': 'http://127.0.0.1:5000/image/' + str(last_id)}
-            return {'error': 'Format allowed is .png .jpg .jpeg .gif or bad filename'}
+            return {'error': 'Format allowed is .png .jpg .jpeg .gif or bad filename'}, 400
 
     def delete(self, id):
         """
@@ -83,7 +83,7 @@ class Image(Resource):
         req = cursor.execute("SELECT imagename FROM images where id = ?", (id,))
         data = cursor.fetchone()
         if data == None:
-            return {'error': "This id doesn't match with any image"}
+            return {'error': "This id doesn't match with any image"}, 400
         cursor.execute("DELETE FROM images where id = ?", (id,))
         bdd.commit()
         minioClient.remove_object(BUCKET_NAME, data[0])
