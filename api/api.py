@@ -91,10 +91,6 @@ class Image(Resource):
 
 api.add_resource(Image, '/image', '/image/<int:id>', endpoint="image_get_delete")
 
-@app.route('/')
-def hello_world():
-    return 'Flask Dockerized'
-
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
